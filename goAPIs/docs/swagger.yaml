@@ -1,0 +1,239 @@
+basePath: /api/v1
+definitions:
+  models.CreateUserRequest:
+    properties:
+      address:
+        description: Address of the user
+        example: 123 Main St
+        type: string
+      email:
+        description: Email address of the user (required)
+        example: john@example.com
+        type: string
+      name:
+        description: Full name of the user (required)
+        example: John Doe
+        type: string
+      phone:
+        description: Phone number of the user
+        example: "+1234567890"
+        type: string
+      role:
+        description: Role of the user in the system
+        example: user
+        type: string
+      status:
+        description: Current status of the user
+        example: active
+        type: string
+    required:
+    - email
+    - name
+    type: object
+  models.UpdateUserRequest:
+    properties:
+      address:
+        description: Address of the user
+        example: 123 Main St
+        type: string
+      email:
+        description: Email address of the user
+        example: john@example.com
+        type: string
+      name:
+        description: Full name of the user
+        example: John Doe
+        type: string
+      phone:
+        description: Phone number of the user
+        example: "+1234567890"
+        type: string
+      role:
+        description: Role of the user in the system
+        example: user
+        type: string
+      status:
+        description: Current status of the user
+        example: active
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: A RESTful API for managing users with CRUD operations
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: User Management API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Get the health status of the API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Health status
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Health check endpoint
+      tags:
+      - health
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided information
+      parameters:
+      - description: User information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User details
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update an existing user's information by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated user information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update an existing user
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
