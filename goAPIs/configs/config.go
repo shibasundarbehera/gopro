@@ -21,8 +21,23 @@ type DatabaseConfig struct {
 }
 
 func LoadConfig() *Config {
-	// Find the project root directory by looking for go.mod file
-	projectRoot := findProjectRoot()
+	// Get the current working directory
+	currentDir, err := os.Getwd()
+	if err != nil {
+		currentDir = "."
+	}
+
+	// Try to find the goAPIs directory by looking for the data folder
+	dataPath := filepath.Join(currentDir, "data", "Users.json")
+	if _, err := os.Stat(dataPath); err != nil {
+		// If not found, try going up one level
+		parentDir := filepath.Dir(currentDir)
+		dataPath = filepath.Join(parentDir, "data", "Users.json")
+		if _, err := os.Stat(dataPath); err != nil {
+			// If still not found, try the original goAPIs directory
+			dataPath = "/Users/ssbehera/Documents/Misc-RnD/2025/gopro/goAPIs/data/Users.json"
+		}
+	}
 
 	return &Config{
 		Server: ServerConfig{
@@ -30,35 +45,9 @@ func LoadConfig() *Config {
 			Host: getEnv("SERVER_HOST", "localhost"),
 		},
 		Database: DatabaseConfig{
-			FilePath: getEnv("DATA_FILE_PATH", filepath.Join(projectRoot, "data", "Users.json")),
+			FilePath: getEnv("DATA_FILE_PATH", dataPath),
 		},
 	}
-}
-
-// findProjectRoot finds the directory containing go.mod file
-func findProjectRoot() string {
-	// Start from current working directory
-	currentDir, err := os.Getwd()
-	if err != nil {
-		return "."
-	}
-
-	// Walk up the directory tree to find go.mod
-	for {
-		if _, err := os.Stat(filepath.Join(currentDir, "go.mod")); err == nil {
-			return currentDir
-		}
-
-		parent := filepath.Dir(currentDir)
-		if parent == currentDir {
-			// Reached root directory
-			break
-		}
-		currentDir = parent
-	}
-
-	// Fallback to current directory
-	return "."
 }
 
 func getEnv(key, defaultValue string) string {
