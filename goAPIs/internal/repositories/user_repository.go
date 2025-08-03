@@ -57,7 +57,7 @@ func (r *UserRepository) Create(user *models.User) error {
 	user.ID = maxID + 1
 
 	// Set timestamps
-	now := time.Now().Format("2006-01-02 15:04:05")
+	now := time.Now().UTC().Format("2006-01-02 15:04:05")
 	user.CreatedAt = now
 	user.UpdatedAt = now
 
@@ -75,7 +75,7 @@ func (r *UserRepository) Update(id int, user *models.User) error {
 		if u.ID == id {
 			user.ID = id
 			user.CreatedAt = u.CreatedAt
-			user.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+			user.UpdatedAt = time.Now().UTC().Format("2006-01-02 15:04:05")
 			users[i] = *user
 			return utils.SaveToFile(r.filePath, users)
 		}
